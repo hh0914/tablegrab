@@ -1,0 +1,364 @@
+/* =============================================================================
+ * TableGrab 表格抓取 —— 设置页样式
+ * ========================================================================== */
+
+:root {
+  --tg-primary: #2563eb;
+  --tg-primary-dark: #1d4ed8;
+  --tg-primary-soft: #eff6ff;
+  --bg: #f5f7fb;
+  --surface: #ffffff;
+  --surface-alt: #f8fafc;
+  --border: #e2e8f0;
+  --border-strong: #cbd5e1;
+  --text: #0f172a;
+  --text-muted: #64748b;
+  --shadow: 0 4px 16px rgba(15, 23, 42, 0.07);
+  --radius: 14px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0b1220;
+    --surface: #111a2b;
+    --surface-alt: #16203224;
+    --border: #24314a;
+    --border-strong: #33415c;
+    --text: #e8eefc;
+    --text-muted: #94a3b8;
+    --shadow: 0 6px 20px rgba(0, 0, 0, 0.42);
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei",
+    "PingFang SC", "Hiragino Sans GB", Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+.page {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 32px 24px 56px;
+}
+
+/* ------------------------------ 头部 ------------------------------ */
+.page__header {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 22px;
+}
+
+.page__header h1 {
+  margin: 0 0 4px;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.logo {
+  border-radius: 14px;
+  flex: 0 0 auto;
+  box-shadow: var(--shadow);
+}
+
+.lead {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 13.5px;
+}
+
+.welcome {
+  margin-bottom: 18px;
+  padding: 12px 16px;
+  border: 1px solid #bfdbfe;
+  border-left: 4px solid var(--tg-primary);
+  border-radius: 10px;
+  background: var(--tg-primary-soft);
+  color: var(--tg-primary-dark);
+  font-weight: 500;
+}
+
+/* ------------------------------ 卡片 ------------------------------ */
+.card {
+  margin-bottom: 18px;
+  padding: 20px 22px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.card__title {
+  margin: 0 0 6px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.card__desc {
+  margin: 0 0 16px;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+code {
+  padding: 1px 6px;
+  border-radius: 5px;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12.5px;
+}
+
+/* ------------------------------ 开关行 ------------------------------ */
+.switch-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 0;
+  cursor: pointer;
+}
+
+.switch-row + .switch-row {
+  border-top: 1px dashed var(--border);
+}
+
+.switch-row__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1 1 auto;
+}
+
+.switch-row__text b {
+  font-weight: 600;
+}
+
+.switch-row__text small {
+  color: var(--text-muted);
+  font-size: 12.5px;
+}
+
+input.switch {
+  appearance: none;
+  position: relative;
+  width: 46px;
+  height: 26px;
+  flex: 0 0 46px;
+  border-radius: 999px;
+  background: var(--border-strong);
+  border: none;
+  cursor: pointer;
+  transition: background 0.18s ease;
+  margin: 0;
+}
+
+input.switch::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.3);
+  transition: transform 0.18s ease;
+}
+
+input.switch:checked {
+  background: var(--tg-primary);
+}
+
+input.switch:checked::after {
+  transform: translateX(20px);
+}
+
+input.switch:focus-visible {
+  outline: 2px solid var(--tg-primary);
+  outline-offset: 2px;
+}
+
+/* ------------------------------ 数字输入 ------------------------------ */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field__label {
+  font-weight: 600;
+  font-size: 13.5px;
+}
+
+.field input[type="number"] {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  background: var(--surface-alt);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 14px;
+}
+
+.field input[type="number"]:focus {
+  outline: none;
+  border-color: var(--tg-primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
+  background: var(--surface);
+}
+
+.field__hint {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+/* ------------------------------ 按钮 ------------------------------ */
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 9px 16px;
+  border: 1px solid var(--border-strong);
+  border-radius: 9px;
+  background: var(--surface);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.btn:hover {
+  border-color: var(--tg-primary);
+  color: var(--tg-primary-dark);
+  background: var(--tg-primary-soft);
+}
+
+.btn--primary {
+  background: var(--tg-primary);
+  border-color: var(--tg-primary);
+  color: #fff;
+  font-weight: 600;
+}
+
+.btn--primary:hover {
+  background: var(--tg-primary-dark);
+  border-color: var(--tg-primary-dark);
+  color: #fff;
+}
+
+.btn--sm {
+  padding: 6px 12px;
+  font-size: 12.5px;
+}
+
+.test-result {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.test-result.is-ok {
+  color: #15803d;
+}
+
+.test-result.is-error {
+  color: #b91c1c;
+}
+
+/* ------------------------------ 使用说明 ------------------------------ */
+.card--help .steps {
+  margin: 0 0 14px;
+  padding-left: 22px;
+  color: var(--text);
+}
+
+.card--help .steps li {
+  margin-bottom: 6px;
+}
+
+.tips {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: var(--surface-alt);
+  border: 1px dashed var(--border-strong);
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+/* ------------------------------ 页脚与提示 ------------------------------ */
+.page__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding-top: 6px;
+  color: var(--text-muted);
+  font-size: 12.5px;
+}
+
+.toast {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 50;
+  padding: 12px 18px;
+  border-radius: 10px;
+  background: rgba(15, 23, 42, 0.95);
+  color: #f8fafc;
+  font-size: 13.5px;
+  box-shadow: var(--shadow);
+  animation: toast-in 0.2s ease;
+}
+
+.toast.is-error {
+  background: rgba(153, 27, 27, 0.96);
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(8px); }
+}
+
+@media (max-width: 640px) {
+  .page {
+    padding: 20px 14px 40px;
+  }
+
+  .page__header {
+    align-items: flex-start;
+  }
+
+  .logo {
+    width: 44px;
+    height: 44px;
+  }
+
+  .card {
+    padding: 16px;
+  }
+}

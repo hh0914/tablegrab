@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TableGrab 设置</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+
+<body>
+  <div class="page">
+    <!-- ======================= 头部 ======================= -->
+    <header class="page__header">
+      <img class="logo" src="icons/icon128.png" alt="TableGrab" width="56" height="56">
+      <div>
+        <h1>TableGrab 表格抓取 · 设置</h1>
+        <p class="lead">网页表格批量导出插件的运行参数。所有设置保存在浏览器本地，修改后立即生效。</p>
+      </div>
+    </header>
+
+    <div class="welcome" id="welcome" hidden>
+      🎉 安装成功！打开任意网页，点击右下角「提取表格」悬浮按钮即可扫描表格。
+    </div>
+
+    <!-- ======================= 悬浮按钮 ======================= -->
+    <section class="card">
+      <h2 class="card__title">悬浮按钮</h2>
+      <p class="card__desc">控制网页右下角「提取表格」按钮的显示。按钮支持拖拽移动，位置会被记住。</p>
+
+      <label class="switch-row">
+        <span class="switch-row__text">
+          <b>显示悬浮按钮</b>
+          <small>关闭后仍可通过工具栏图标或快捷键 Alt+Shift+T 提取表格</small>
+        </span>
+        <input type="checkbox" id="showFloatingButton" class="switch">
+      </label>
+    </section>
+
+    <!-- ======================= 过滤规则 ======================= -->
+    <section class="card">
+      <h2 class="card__title">表格过滤规则</h2>
+      <p class="card__desc">用来过滤空表格与布局装饰表格。数值调小会保留更多表格，调大会只保留结构完整的数据表。</p>
+
+      <div class="grid">
+        <label class="field">
+          <span class="field__label">最小有效行数</span>
+          <input type="number" id="minRows" min="1" max="100" step="1">
+          <span class="field__hint">少于该行数的表格会被忽略（默认 2）</span>
+        </label>
+
+        <label class="field">
+          <span class="field__label">最小有效列数</span>
+          <input type="number" id="minCols" min="1" max="100" step="1">
+          <span class="field__hint">少于该列数的表格会被忽略（默认 2）</span>
+        </label>
+      </div>
+
+      <label class="switch-row">
+        <span class="switch-row__text">
+          <b>过滤布局装饰表格</b>
+          <small>识别「用表格做页面排版」的装饰性表格并自动排除（推荐开启）</small>
+        </span>
+        <input type="checkbox" id="filterLayoutTables" class="switch">
+      </label>
+
+      <label class="switch-row">
+        <span class="switch-row__text">
+          <b>跳过隐藏表格</b>
+          <small>开启后会排除 display:none 或尺寸为 0 的表格；SPA 多标签页里的隐藏表格建议保留</small>
+        </span>
+        <input type="checkbox" id="skipHiddenTables" class="switch">
+      </label>
+    </section>
+
+    <!-- ======================= 导出偏好 ======================= -->
+    <section class="card">
+      <h2 class="card__title">导出偏好</h2>
+      <p class="card__desc">仅影响导出文件名，正文数据不受影响。默认文件名规则：<code>page_table_日期_序号.扩展名</code>，例如 <code>page_table_20261015_001.csv</code>。</p>
+
+      <label class="switch-row">
+        <span class="switch-row__text">
+          <b>文件名带网页标题前缀</b>
+          <small>例如「<code>2026年一季度销售报表_page_table_20261015_001.csv</code>」，方便区分来源页面</small>
+        </span>
+        <input type="checkbox" id="usePageTitleInFilename" class="switch">
+      </label>
+    </section>
+
+    <!-- ======================= 自检 ======================= -->
+    <section class="card">
+      <h2 class="card__title">功能自检</h2>
+      <p class="card__desc">使用当前过滤规则，对最近浏览过的普通网页执行一次试扫，用来确认规则是否过严。</p>
+      <div class="actions">
+        <button class="btn btn--primary" id="btnTestScan" type="button">用当前规则试扫最近浏览的网页</button>
+        <button class="btn" id="btnReset" type="button">恢复默认设置</button>
+        <span class="test-result" id="testResult"></span>
+      </div>
+    </section>
+
+    <!-- ======================= 使用说明 ======================= -->
+    <section class="card card--help">
+      <h2 class="card__title">使用说明</h2>
+      <ol class="steps">
+        <li>打开任意含表格的网页，点击右下角 <b>「提取表格」</b> 悬浮按钮（可用鼠标拖拽调整位置）。</li>
+        <li>插件会自动打开新标签页列出本页全部表格，支持搜索、勾选、预览、查看原始 HTML。</li>
+        <li>选择导出格式（CSV / Excel 兼容 CSV / Markdown / JSON）与导出方式，点击「导出选中」。</li>
+        <li>文件会保存到浏览器默认下载目录，文件名形如 <code>page_table_20261015_001.csv</code>。</li>
+      </ol>
+      <p class="tips">
+        <b>小提示</b>：SPA（Vue / React 单页应用）页面内容变化后，可直接在预览页点击「重新提取」重新扫描；
+        也可以在网页上按 <code>Alt+Shift+T</code>，或点击浏览器工具栏中的插件图标。
+      </p>
+    </section>
+
+    <footer class="page__footer">
+      <span>TableGrab 表格抓取 v1.0.0 · 基于 Manifest V3，兼容 Microsoft Edge / Chrome</span>
+      <button class="btn btn--sm" id="btnOpenGallery" type="button">打开表格预览页</button>
+    </footer>
+  </div>
+
+  <div class="toast" id="toast" hidden></div>
+
+  <script src="lib/table-utils.js"></script>
+  <script src="options.js"></script>
+</body>
+
+</html>

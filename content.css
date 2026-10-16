@@ -1,0 +1,182 @@
+/* =============================================================================
+ * TableGrab 表格抓取 —— 悬浮按钮样式
+ * 说明：
+ *   这些样式通过 <link rel="stylesheet"> 注入到插件自己的 Shadow DOM 中，
+ *   既避免网页 CSS 污染插件 UI，也不会污染网页。
+ *   所有选择器都只在 shadow root 内部生效。
+ * ========================================================================== */
+
+:host {
+  all: initial;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.tg-root {
+  /* 主题色变量，方便统一调整 */
+  --tg-primary: #2563eb;
+  --tg-primary-dark: #1d4ed8;
+  --tg-primary-soft: #dbeafe;
+  --tg-danger: #dc2626;
+  --tg-success: #16a34a;
+  --tg-text: #0f172a;
+  --tg-radius: 999px;
+
+  position: relative; /* 作为 toast 绝对定位的参照 */
+  display: inline-block;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei",
+    "PingFang SC", "Hiragino Sans GB", Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--tg-text);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------------------------- 悬浮按钮本体 ---------------------------- */
+.tg-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px 10px 14px;
+  border: none;
+  border-radius: var(--tg-radius);
+  background: linear-gradient(135deg, var(--tg-primary) 0%, var(--tg-primary-dark) 100%);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.32), 0 2px 6px rgba(15, 23, 42, 0.12);
+  transition: transform 0.16s ease, box-shadow 0.16s ease, filter 0.16s ease;
+  touch-action: none; /* 拖拽时禁用移动端默认滚动 */
+}
+
+.tg-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(37, 99, 235, 0.4), 0 3px 10px rgba(15, 23, 42, 0.16);
+  filter: saturate(1.08);
+}
+
+.tg-btn:active {
+  transform: translateY(0) scale(0.97);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.32);
+}
+
+.tg-btn:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+/* 拖拽中：跟手、无过渡、放大光标 */
+.tg-root.is-dragging .tg-btn {
+  cursor: grabbing;
+  transition: none;
+  transform: scale(1.04);
+  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.28);
+}
+
+/* 扫描中：转圈 + 变灰 */
+.tg-root.is-busy .tg-btn {
+  pointer-events: none;
+  filter: grayscale(0.15) brightness(0.96);
+}
+
+.tg-btn__icon {
+  display: inline-flex;
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+}
+
+.tg-btn__icon svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.tg-root.is-busy .tg-btn__icon {
+  animation: tg-spin 0.9s linear infinite;
+}
+
+@keyframes tg-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* 表格数量角标 */
+.tg-btn__badge {
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 10px;
+  background: #fff;
+  color: var(--tg-primary-dark);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 20px;
+  text-align: center;
+}
+
+.tg-btn__badge[hidden] {
+  display: none;
+}
+
+/* ---------------------------- 拖拽把手提示 ---------------------------- */
+.tg-btn__grip {
+  display: inline-block;
+  width: 3px;
+  height: 14px;
+  border-left: 2px dotted rgba(255, 255, 255, 0.55);
+  margin-left: -2px;
+  opacity: 0;
+  transition: opacity 0.16s ease;
+}
+
+.tg-btn:hover .tg-btn__grip {
+  opacity: 1;
+}
+
+/* ---------------------------- 轻提示 Toast ---------------------------- */
+.tg-toast {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  right: 0;
+  max-width: 300px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(15, 23, 42, 0.94);
+  color: #f8fafc;
+  font-size: 13px;
+  line-height: 1.5;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.28);
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  pointer-events: none;
+  word-break: break-word;
+}
+
+.tg-toast.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.tg-toast.is-error {
+  background: rgba(153, 27, 27, 0.95);
+}
+
+.tg-toast.is-success {
+  background: rgba(21, 94, 55, 0.95);
+}
+
+/* 尊重系统「减少动态效果」设置 */
+@media (prefers-reduced-motion: reduce) {
+  .tg-btn,
+  .tg-toast {
+    transition: none !important;
+  }
+}

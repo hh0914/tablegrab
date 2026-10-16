@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>功能详解 —— TableGrab 表格抓取</title>
+  <meta name="description" content="TableGrab 表格抓取功能详解：表格识别与过滤规则、rowspan/colspan 合并单元格展开、四种导出格式、批量导出方式、权限说明与项目目录结构。">
+  <meta name="theme-color" content="#2563eb">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <a class="skip-link" href="#main">跳到主要内容</a>
+
+  <header class="site-header">
+    <nav class="nav wrap" aria-label="主导航">
+      <a class="brand" href="index.html">
+        <img class="brand__mark" src="assets/logo.svg" alt="" width="30" height="30">
+        <span><span class="brand__name">TableGrab</span> <span class="brand__sub">表格抓取</span></span>
+      </a>
+
+      <button class="icon-btn nav__toggle" id="navToggle" type="button" aria-label="展开导航菜单"
+        aria-controls="navLinks" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          aria-hidden="true">
+          <path d="M3 6h18M3 12h18M3 18h18" />
+        </svg>
+      </button>
+
+      <div class="nav__links" id="navLinks">
+        <a class="nav__link" href="index.html#features">核心功能</a>
+        <a class="nav__link" href="features.html">功能详解</a>
+        <a class="nav__link" href="install.html">安装使用</a>
+        <a class="nav__link" href="faq.html">常见问题</a>
+      </div>
+
+      <div class="nav__actions">
+        <button class="icon-btn" id="themeToggle" type="button" aria-label="切换深色模式">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4.5" />
+            <path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M6.5 17.5L5 19" />
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" hidden aria-hidden="true">
+            <path d="M20 14.5A8.5 8.5 0 019.5 4a8.5 8.5 0 1010.5 10.5z" />
+          </svg>
+        </button>
+        <a class="btn btn--primary btn--sm" href="install.html">立即安装</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="page-hero">
+      <div class="wrap">
+        <nav class="breadcrumb" aria-label="面包屑"><a href="index.html">首页</a> <span>/</span> <span>功能详解</span></nav>
+        <h1 class="page-hero__title">功能详解</h1>
+        <p class="page-hero__desc">从表格识别、过滤规则、合并单元格处理，到四种导出格式与批量导出方式，这里是 TableGrab 的完整能力说明。</p>
+      </div>
+    </section>
+
+    <!-- ==================== 表格识别 ==================== -->
+    <section class="section">
+      <div class="wrap prose">
+        <h2 id="scan">1. 表格识别与解析</h2>
+        <p>
+          点击悬浮按钮后，插件会对当前页面执行一次<b>实时扫描</b>，收集所有 <code>&lt;table&gt;</code> 元素并逐张解析：
+        </p>
+        <ul>
+          <li><b>结构识别</b>：遍历 <code>table.rows</code> 得到全部 <code>&lt;tr&gt;</code>，再遍历每行的
+            <code>&lt;td&gt;</code> / <code>&lt;th&gt;</code>，<code>&lt;thead&gt;</code>、
+            <code>&lt;tbody&gt;</code>、<code>&lt;tfoot&gt;</code> 中的行都会按文档顺序纳入。</li>
+          <li><b>合并单元格展开</b>：<code>rowspan</code> / <code>colspan</code> 会被还原成规整的二维数组，
+            被占用的格子补空字符串，保证每行长度一致，导出后不会出现错列。</li>
+          <li><b>文本提取</b>：优先使用 <code>innerText</code>（能正确反映 <code>&lt;br&gt;</code> 与 CSS 隐藏内容），
+            超大表格改用 DOM 遍历以节省性能，两种方式都会保留单元格内的换行。</li>
+          <li><b>无文字单元格兜底</b>：只有图标或输入框的单元格会读取图片 <code>alt</code> 或 <code>input.value</code>，
+            避免导出出现整列空白。</li>
+          <li><b>表格标题推断</b>：依次尝试 <code>&lt;caption&gt;</code>、<code>aria-label</code>、
+            <code>data-title</code>、<code>title</code> 属性，再向上查找最近的 <code>&lt;h1&gt;~&lt;h6&gt;</code> 标题，
+            最后退化为首个表头行。</li>
+          <li><b>多行表头合并</b>：<code>&lt;thead&gt;</code> 含多行时会把它们合并成一行复合表头，
+            例如「2026 / Q1」会合并为「2026 - Q1」，让 JSON 的字段名更有意义。</li>
+        </ul>
+
+        <h2 id="filter">2. 无效表格过滤规则</h2>
+        <p>网页里大量 <code>&lt;table&gt;</code> 只用于页面排版，插件默认会剔除下列情况，规则均可调整：</p>
+        <table class="table-simple">
+          <thead>
+            <tr>
+              <th>过滤规则</th>
+              <th>判定条件</th>
+              <th>默认值</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>行列过少</td>
+              <td>行数或列数小于设定阈值</td>
+              <td>最小 2 行 / 2 列</td>
+            </tr>
+            <tr>
+              <td>内容为空</td>
+              <td>整张表有效单元格少于 2 个，或文本总长度为 0</td>
+              <td>始终启用</td>
+            </tr>
+            <tr>
+              <td>布局装饰表</td>
+              <td>行数 ≤ 2 且 80% 以上单元格直接放置块级容器，同时文字极少</td>
+              <td>启用（可关闭）</td>
+            </tr>
+            <tr>
+              <td>嵌套布局表</td>
+              <td>表内直接嵌套表格且自身几乎没有文字</td>
+              <td>启用（可关闭）</td>
+            </tr>
+            <tr>
+              <td>隐藏表格</td>
+              <td><code>display:none</code>、<code>visibility:hidden</code> 或没有任何几何矩形</td>
+              <td>保留，仅标记「页面中隐藏」</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="callout">
+          <strong>被过滤的表格不会被丢弃统计：</strong>预览页顶部会提示本次过滤了多少张表格，
+          设置页的「功能自检」还能对最近浏览的网页做一次只统计不导出的试扫，帮助你判断阈值是否过严。
+        </div>
+
+        <h2 id="formats">3. 四种导出格式</h2>
+        <table class="table-simple">
+          <thead>
+            <tr>
+              <th>格式</th>
+              <th>文件扩展名</th>
+              <th>适用场景</th>
+              <th>特殊处理</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>CSV</td>
+              <td><code>.csv</code></td>
+              <td>通用数据交换、脚本处理</td>
+              <td>含逗号 / 引号 / 换行的字段自动加引号包裹并转义</td>
+            </tr>
+            <tr>
+              <td>Excel 兼容 CSV</td>
+              <td><code>.csv</code></td>
+              <td>直接用 Excel 打开、给同事查看</td>
+              <td>追加 UTF-8 BOM 头，换行改为 CRLF，中文不乱码</td>
+            </tr>
+            <tr>
+              <td>Markdown 表格</td>
+              <td><code>.md</code></td>
+              <td>写进文档、笔记、Issue 描述</td>
+              <td>竖线转义为 <code>\|</code>，换行转成 <code>&lt;br&gt;</code>，列宽自动补齐</td>
+            </tr>
+            <tr>
+              <td>JSON</td>
+              <td><code>.json</code></td>
+              <td>对接接口、程序读取</td>
+              <td>同时输出结构化 <code>records</code> 与原始 <code>matrix</code>，重名表头自动去重</td>
+            </tr>
+          </tbody>
+        </table>
+        <p>
+          导出时会用当前勾选的顺序编号：单独文件模式生成
+          <code>page_table_20261015_001.csv</code>、<code>page_table_20261015_002.csv</code>……；
+          合并模式生成 <code>page_table_20261015_all.csv</code>，多张表格之间以分节标题分隔，Excel 中依然可读。
+        </p>
+        <p>勾选设置页的「文件名带网页标题前缀」后，文件名会变成
+          <code>2026年一季度销售报表_page_table_20261015_001.csv</code>，方便多页面导出后区分来源。</p>
+
+        <h2 id="gallery">4. 预览页交互</h2>
+        <ul>
+          <li>默认全选所有表格，取消勾选只需点一下复选框；「仅导出此表」可以一键只导出当前这张。</li>
+          <li>顶部搜索框支持按<b>标题、行列数、单元格内容</b>关键字过滤，多个关键字用空格分隔表示「同时满足」。</li>
+          <li>每张卡片都有「展开全部行」「查看源码」「复制」按钮；复制的内容是 TSV 格式，可直接粘贴进 Excel。</li>
+          <li>表格卡片显示行列数、是否识别到表头、是否被截断、是否在页面中隐藏，以及可直接在控制台使用的定位选择器。</li>
+          <li>卡片数量超过 40 张时分批渲染，避免长列表卡顿；底部状态栏实时显示导出进度。</li>
+        </ul>
+
+        <h2 id="spa">5. SPA 动态网页兼容</h2>
+        <p>
+          插件不会缓存页面的初始快照，每次点击「提取表格」都是对当前 DOM 的实时扫描，因此：
+        </p>
+        <ul>
+          <li>Vue / React / Angular 渲染出的表格，只要已经出现在 DOM 中就能被抓到。</li>
+          <li>页面内容更新后，在预览页点击「重新提取」会重新扫描来源网页并<b>刷新同一个预览标签页</b>，不会不断开新标签。</li>
+          <li>部分框架会整块替换 <code>&lt;body&gt;</code>，插件通过 MutationObserver 监听并自动重新挂载悬浮按钮。</li>
+          <li>悬浮按钮挂在 <code>&lt;html&gt;</code> 下的独立 Shadow DOM 中，不会参与框架的虚拟 DOM diff，也不会影响页面原有样式。</li>
+        </ul>
+
+        <h2 id="tech">6. 权限说明与项目结构</h2>
+        <p>扩展只申请完成功能所必需的权限，含义如下：</p>
+        <table class="table-simple">
+          <thead>
+            <tr>
+              <th>权限</th>
+              <th>用途</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>activeTab</code> / <code>scripting</code></td>
+              <td>在扩展刚安装、页面尚未刷新时，向当前标签页补注入内容脚本</td>
+            </tr>
+            <tr>
+              <td><code>downloads</code></td>
+              <td>把导出的文件保存到浏览器默认下载目录，以及打开下载目录</td>
+            </tr>
+            <tr>
+              <td><code>storage</code></td>
+              <td>保存悬浮按钮开关、按钮位置、过滤阈值与导出偏好</td>
+            </tr>
+            <tr>
+              <td><code>host_permissions: &lt;all_urls&gt;</code></td>
+              <td>在任意网页注入悬浮按钮并读取页面表格结构</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>项目目录结构</h3>
+        <pre class="code-block" style="border-radius:var(--radius);border:1px solid var(--border);"><code>tablegrab/
+├── manifest.json          # Manifest V3 清单：权限、内容脚本、后台脚本
+├── background.js          # Service Worker：消息路由、数据暂存、生成并下载文件
+├── content.js             # 内容脚本：悬浮按钮注入 + 页面表格解析
+├── content.css            # 悬浮按钮样式（注入 Shadow DOM）
+├── table-gallery.html     # 预览页：表格列表、勾选、导出交互
+├── table-gallery.js
+├── table-gallery.css
+├── options.html           # 设置页：悬浮按钮开关、过滤阈值、导出偏好
+├── options.js
+├── options.css
+├── lib/
+│   └── table-utils.js     # 公共纯逻辑：网格重建、CSV/Markdown/JSON 格式化、文件名
+├── icons/                 # 16 / 32 / 48 / 128 图标
+├── docs/                  # 本静态官网（与扩展运行无关，可单独部署）
+└── dev/                   # 开发工具：图标生成脚本、自动化测试、手工测试页</code></pre>
+
+        <div class="callout">
+          <strong>技术栈：</strong>原生 JavaScript（无框架、无打包工具），Manifest V3，
+          内容脚本 + Shadow DOM 隔离，Service Worker 负责下载与格式化；<code>docs/</code> 为纯静态宣传页。
+        </div>
+      </div>
+    </section>
+
+    <section class="cta-band">
+      <div class="wrap">
+        <h2>功能已经了解清楚了？</h2>
+        <p>接下来用三步把扩展加载到 Microsoft Edge 中。</p>
+        <a class="btn btn--lg" href="install.html">查看安装教程</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer__grid">
+        <div class="footer__brand">
+          <a class="brand" href="index.html">
+            <img class="brand__mark" src="assets/logo.svg" alt="" width="30" height="30">
+            <span><span class="brand__name">TableGrab</span> <span class="brand__sub">表格抓取</span></span>
+          </a>
+          <p>面向 Microsoft Edge / Chrome 的网页表格批量导出扩展，基于 Manifest V3，数据全程本地处理。</p>
+        </div>
+        <nav class="footer__links" aria-label="页脚导航">
+          <div class="footer__col">
+            <h3>产品</h3>
+            <a href="index.html#features">核心功能</a>
+            <a href="features.html">功能详解</a>
+            <a href="index.html#formats">导出格式</a>
+          </div>
+          <div class="footer__col">
+            <h3>文档</h3>
+            <a href="install.html">安装教程</a>
+            <a href="install.html#usage">使用说明</a>
+            <a href="faq.html">常见问题</a>
+          </div>
+          <div class="footer__col">
+            <h3>技术信息</h3>
+            <a href="features.html#tech">权限说明</a>
+            <a href="features.html#tech">目录结构</a>
+            <a href="faq.html#troubleshoot">故障排查</a>
+          </div>
+        </nav>
+      </div>
+      <div class="footer__bottom">
+        <span>© <span data-year>2026</span> TableGrab 表格抓取 · 静态演示站点</span>
+        <span>兼容 Microsoft Edge (Chromium) 与 Google Chrome · Manifest V3</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+
+</html>

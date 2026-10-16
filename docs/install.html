@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>安装与使用教程 —— TableGrab 表格抓取</title>
+  <meta name="description" content="TableGrab 表格抓取 Edge 扩展离线安装教程：开启开发人员模式、加载解压缩的扩展、完整使用步骤、更新与卸载方法。">
+  <meta name="theme-color" content="#2563eb">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <a class="skip-link" href="#main">跳到主要内容</a>
+
+  <header class="site-header">
+    <nav class="nav wrap" aria-label="主导航">
+      <a class="brand" href="index.html">
+        <img class="brand__mark" src="assets/logo.svg" alt="" width="30" height="30">
+        <span><span class="brand__name">TableGrab</span> <span class="brand__sub">表格抓取</span></span>
+      </a>
+
+      <button class="icon-btn nav__toggle" id="navToggle" type="button" aria-label="展开导航菜单"
+        aria-controls="navLinks" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          aria-hidden="true">
+          <path d="M3 6h18M3 12h18M3 18h18" />
+        </svg>
+      </button>
+
+      <div class="nav__links" id="navLinks">
+        <a class="nav__link" href="index.html#features">核心功能</a>
+        <a class="nav__link" href="features.html">功能详解</a>
+        <a class="nav__link" href="install.html">安装使用</a>
+        <a class="nav__link" href="faq.html">常见问题</a>
+      </div>
+
+      <div class="nav__actions">
+        <button class="icon-btn" id="themeToggle" type="button" aria-label="切换深色模式">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4.5" />
+            <path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M6.5 17.5L5 19" />
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" hidden aria-hidden="true">
+            <path d="M20 14.5A8.5 8.5 0 019.5 4a8.5 8.5 0 1010.5 10.5z" />
+          </svg>
+        </button>
+        <a class="btn btn--primary btn--sm" href="#step-1">开始安装</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="page-hero">
+      <div class="wrap">
+        <nav class="breadcrumb" aria-label="面包屑"><a href="index.html">首页</a> <span>/</span> <span>安装使用</span></nav>
+        <h1 class="page-hero__title">Edge 离线安装与使用教程</h1>
+        <p class="page-hero__desc">TableGrab 以「加载解压缩的扩展」方式安装，不需要应用商店账号，也不需要联网下载。
+          整个过程大约 30 秒。</p>
+      </div>
+    </section>
+
+    <!-- ==================== 准备工作 ==================== -->
+    <section class="section">
+      <div class="wrap">
+        <div class="prose" style="margin-bottom:34px;">
+          <h2 id="prepare">开始之前</h2>
+          <p>确认你拿到的是完整的插件文件夹，其中<b>必须</b>包含 <code>manifest.json</code> 文件。
+            目录内至少应该有下面这些内容：</p>
+          <pre class="code-block" style="border-radius:var(--radius);border:1px solid var(--border);"><code>manifest.json     ← 关键文件，Edge 通过它识别扩展
+background.js
+content.js
+content.css
+table-gallery.html / .js / .css
+options.html / .js / .css
+lib/  icons/</code></pre>
+          <div class="callout callout--warn">
+            <strong>注意：</strong>要选择的是<b>包含 manifest.json 的那一级文件夹</b>。
+            如果选错层级，Edge 会提示「无法加载扩展程序，清单文件缺失或不可读」。
+          </div>
+        </div>
+
+        <h2 class="section__title" id="step-1" style="font-size:26px;margin-bottom:22px;">安装步骤</h2>
+
+        <ol class="install-steps">
+          <li class="install-step reveal">
+            <span class="install-step__num">1</span>
+            <div>
+              <h3 class="install-step__title">打开扩展管理页面</h3>
+              <div class="install-step__body">
+                打开 Microsoft Edge，在地址栏输入下面的地址并回车（也可以点击右上角「…」→「扩展」→「管理扩展」）：
+                <div class="copy-row">
+                  <code class="inline-code">edge://extensions/</code>
+                  <button class="btn btn--sm" type="button" data-copy="edge://extensions/"
+                    data-copy-message="已复制扩展管理地址">复制地址</button>
+                </div>
+                <div class="callout">使用 Google Chrome 的话，地址是 <code>chrome://extensions/</code>，其余步骤完全一致。</div>
+              </div>
+            </div>
+          </li>
+
+          <li class="install-step reveal">
+            <span class="install-step__num">2</span>
+            <div>
+              <h3 class="install-step__title">开启「开发人员模式」</h3>
+              <div class="install-step__body">
+                在扩展页面左下角找到<b>开发人员模式</b>开关并打开。打开后页面顶部会出现
+                「加载解压缩的扩展」「打包扩展」等按钮。
+              </div>
+            </div>
+          </li>
+
+          <li class="install-step reveal">
+            <span class="install-step__num">3</span>
+            <div>
+              <h3 class="install-step__title">点击「加载解压缩的扩展」并选择插件文件夹</h3>
+              <div class="install-step__body">
+                在弹出的文件夹选择窗口中，定位到插件目录，选中包含 <code>manifest.json</code> 的那一层，确认即可。
+                <ul>
+                  <li>加载成功后，扩展列表里会出现 <b>TableGrab 表格抓取</b> 卡片。</li>
+                  <li>浏览器工具栏会出现蓝色的表格图标；点击工具栏的「扩展」图标可以把它固定到显眼位置。</li>
+                  <li>首次安装会自动打开设置页，介绍基本用法。</li>
+                </ul>
+              </div>
+            </div>
+          </li>
+
+          <li class="install-step reveal">
+            <span class="install-step__num">4</span>
+            <div>
+              <h3 class="install-step__title">验证安装结果</h3>
+              <div class="install-step__body">
+                打开任意含表格的网页（例如任意一个数据报表页面），页面右下角应出现蓝色的
+                <b>「提取表格」</b> 悬浮按钮。
+                <ul>
+                  <li>如果按钮没出现，先按 <kbd>F5</kbd> 刷新一次页面（内容脚本只对刷新后的页面生效）。</li>
+                  <li>点击浏览器工具栏的插件图标，或按 <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>T</kbd> 也能触发扫描。</li>
+                </ul>
+              </div>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ==================== 使用说明 ==================== -->
+    <section class="section section--soft" id="usage">
+      <div class="wrap">
+        <div class="section__head reveal">
+          <span class="eyebrow">使用说明</span>
+          <h2 class="section__title">一次完整的导出流程</h2>
+          <p class="section__desc">以「导出网页上 3 张表格为 Excel 兼容 CSV」为例。</p>
+        </div>
+
+        <div class="prose" style="max-width:900px;margin:0 auto;">
+          <h3>① 提取表格</h3>
+          <p>点击右下角悬浮按钮。按钮支持按住拖动，位置会被记住；扫描过程中图标会旋转，完成后提示「已提取 N 张表格」。
+            如果本页没有符合条件的表格，会直接提示共发现多少个 <code>&lt;table&gt;</code>、过滤掉多少个。</p>
+
+          <h3>② 在预览页确定要导出的表格</h3>
+          <ul>
+            <li>预览页默认<b>全选</b>所有表格，不需要的表格取消勾选即可。</li>
+            <li>用顶部搜索框输入关键字（标题、内容、行列数都支持）快速定位。</li>
+            <li>用「全选 / 反选 / 清除已选」批量调整；右上角计数器实时显示「已选 N / M」。</li>
+            <li>点击卡片上的「展开全部行」查看完整数据，「查看源码」可以看到该表格的原始 HTML 片段。</li>
+          </ul>
+
+          <h3>③ 选择导出格式与导出方式</h3>
+          <table class="table-simple">
+            <thead>
+              <tr>
+                <th>选项</th>
+                <th>说明</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>导出格式</td>
+                <td>CSV / Excel 兼容 CSV（含 BOM） / Markdown 表格 / JSON</td>
+              </tr>
+              <tr>
+                <td>导出方式</td>
+                <td>每个表格单独文件（<code>_001</code>、<code>_002</code>…）或全部合并为一个 <code>_all</code> 文件</td>
+              </tr>
+              <tr>
+                <td>文件名带网页标题前缀</td>
+                <td>勾选后文件名前面会加上来源网页标题，便于多页面导出后区分</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>这三项选择会被记住，下次打开预览页时自动沿用。</p>
+
+          <h3>④ 点击「导出选中」并收取文件</h3>
+          <ul>
+            <li>底部状态栏会显示「已导出 2 / 3」这样的实时进度。</li>
+            <li>文件保存到浏览器的<b>默认下载目录</b>，点击状态栏右侧「打开下载目录」可以直接跳转。</li>
+            <li>同名文件不会覆盖，浏览器会自动追加序号。</li>
+            <li>如果 Edge 弹出「是否允许下载多个文件」的询问，选择<b>允许</b>即可。</li>
+          </ul>
+
+          <h3>⑤ 常用快捷键与入口</h3>
+          <table class="table-simple">
+            <thead>
+              <tr>
+                <th>入口</th>
+                <th>说明</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>右下角悬浮按钮</td>
+                <td>最常用，可在设置页关闭</td>
+              </tr>
+              <tr>
+                <td>工具栏插件图标</td>
+                <td>等效于点击悬浮按钮，适用于按钮被网页遮挡的情况</td>
+              </tr>
+              <tr>
+                <td><kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>T</kbd></td>
+                <td>键盘快捷键，可在 <code>edge://extensions/shortcuts</code> 中自定义</td>
+              </tr>
+              <tr>
+                <td>预览页「重新提取」</td>
+                <td>重新扫描来源网页并在当前预览页刷新数据，适合 SPA 页面内容更新后使用</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 维护 ==================== -->
+    <section class="section">
+      <div class="wrap prose">
+        <h2 id="maintain">更新、卸载与常见安装问题</h2>
+
+        <h3>修改代码后如何让扩展生效</h3>
+        <ol>
+          <li>在 <code>edge://extensions/</code> 找到 TableGrab 卡片，点击<b>刷新</b>按钮（圆形箭头图标）。</li>
+          <li>回到目标网页按 <kbd>F5</kbd> 刷新，让新的内容脚本重新注入。</li>
+          <li>如果修改的是 <code>manifest.json</code> 的权限或内容脚本配置，建议先点「移除」再重新「加载解压缩的扩展」。</li>
+        </ol>
+
+        <h3>卸载</h3>
+        <p>在 <code>edge://extensions/</code> 的 TableGrab 卡片上点击「删除」，或在卡片右下角点击「移除」，
+          同时勾选清除本地数据即可删除悬浮按钮位置、过滤阈值等设置。</p>
+
+        <h3>安装时可能遇到的提示</h3>
+        <table class="table-simple">
+          <thead>
+            <tr>
+              <th>提示信息</th>
+              <th>原因与解决办法</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>清单文件缺失或不可读</td>
+              <td>选择的目录层级不对，请选中直接包含 <code>manifest.json</code> 的那一层文件夹</td>
+            </tr>
+            <tr>
+              <td>清单文件不是有效的 JSON</td>
+              <td><code>manifest.json</code> 被编辑器写入了 BOM 或注释，请保存为无 BOM 的 UTF-8 纯 JSON</td>
+            </tr>
+            <tr>
+              <td>无法从该网站添加应用</td>
+              <td>本地文件夹不受此限制，请使用「加载解压缩的扩展」而不是拖拽到扩展商店页面</td>
+            </tr>
+            <tr>
+              <td>扩展图标是灰色的</td>
+              <td>当前页面是浏览器内置页面（<code>edge://</code>、扩展商店等），浏览器禁止注入，切换到普通网页即可</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout">
+          更多交互细节见 <a href="features.html">功能详解</a>，其他问题见 <a href="faq.html">常见问题</a>。
+        </div>
+      </div>
+    </section>
+
+    <section class="cta-band">
+      <div class="wrap">
+        <h2>安装完成，去抓一张表试试</h2>
+        <p>打开任意数据报表页，点击右下角「提取表格」，几十秒后你就能拿到一份干净的表格文件。</p>
+        <a class="btn btn--lg" href="index.html#formats">查看导出格式示例</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer__grid">
+        <div class="footer__brand">
+          <a class="brand" href="index.html">
+            <img class="brand__mark" src="assets/logo.svg" alt="" width="30" height="30">
+            <span><span class="brand__name">TableGrab</span> <span class="brand__sub">表格抓取</span></span>
+          </a>
+          <p>面向 Microsoft Edge / Chrome 的网页表格批量导出扩展，基于 Manifest V3，数据全程本地处理。</p>
+        </div>
+        <nav class="footer__links" aria-label="页脚导航">
+          <div class="footer__col">
+            <h3>产品</h3>
+            <a href="index.html#features">核心功能</a>
+            <a href="features.html">功能详解</a>
+            <a href="index.html#formats">导出格式</a>
+          </div>
+          <div class="footer__col">
+            <h3>文档</h3>
+            <a href="install.html">安装教程</a>
+            <a href="install.html#usage">使用说明</a>
+            <a href="faq.html">常见问题</a>
+          </div>
+          <div class="footer__col">
+            <h3>技术信息</h3>
+            <a href="features.html#tech">权限说明</a>
+            <a href="features.html#tech">目录结构</a>
+            <a href="faq.html#troubleshoot">故障排查</a>
+          </div>
+        </nav>
+      </div>
+      <div class="footer__bottom">
+        <span>© <span data-year>2026</span> TableGrab 表格抓取 · 静态演示站点</span>
+        <span>兼容 Microsoft Edge (Chromium) 与 Google Chrome · Manifest V3</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+
+</html>

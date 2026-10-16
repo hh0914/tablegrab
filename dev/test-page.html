@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TableGrab 手工测试页</title>
+  <style>
+    :root {
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --muted: #64748b;
+      --brand: #2563eb;
+      --bg-soft: #f8fafc;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 32px 24px 120px;
+      background: #fff;
+      color: var(--text);
+      font: 14px/1.7 -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+    }
+
+    .page { max-width: 1080px; margin: 0 auto; }
+
+    h1 { font-size: 24px; margin: 0 0 6px; }
+    h2 { font-size: 17px; margin: 34px 0 6px; }
+    h3 { font-size: 15px; margin: 22px 0 6px; }
+
+    .lead { color: var(--muted); margin: 0 0 18px; }
+
+    .case {
+      margin-bottom: 16px;
+      padding: 16px 18px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--bg-soft);
+    }
+
+    .case__tag {
+      display: inline-block;
+      margin-bottom: 8px;
+      padding: 2px 9px;
+      border-radius: 6px;
+      background: #dbeafe;
+      color: #1d4ed8;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .case__expect { color: var(--muted); font-size: 13px; margin: 8px 0 0; }
+
+    table {
+      border-collapse: collapse;
+      margin: 10px 0;
+      background: #fff;
+      font-size: 13.5px;
+    }
+
+    th, td {
+      border: 1px solid var(--border);
+      padding: 7px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    thead th { background: var(--bg-soft); }
+
+    .toolbar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    button {
+      padding: 8px 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--text);
+      font: inherit;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    button:hover { border-color: var(--brand); color: #1d4ed8; }
+
+    code {
+      padding: 1px 6px;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      background: #fff;
+      font-family: ui-monospace, Consolas, monospace;
+      font-size: 12.5px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <h1>TableGrab 手工测试页</h1>
+    <p class="lead">
+      用 Edge 加载扩展后打开本页面，逐个核对下方测试用例。每个用例都标注了「预期结果」，
+      用于验证表格识别、过滤规则、合并单元格展开、特殊字符转义与 SPA 动态渲染兼容。
+    </p>
+
+    <div class="toolbar">
+      <button type="button" id="btnInject">① 动态插入一张表格（SPA 模拟）</button>
+      <button type="button" id="btnLate">② 1.5 秒后异步插入表格</button>
+      <button type="button" id="btnReplace">③ 整块替换 body（模拟框架重渲染）</button>
+      <button type="button" id="btnBig">④ 生成 120 行 × 8 列大表格</button>
+      <button type="button" id="btnClear">⑤ 移除动态插入的内容</button>
+    </div>
+
+    <!-- ==================== 用例 1 ==================== -->
+    <h2>用例清单</h2>
+
+    <div class="case">
+      <span class="case__tag">用例 1 · 标准数据表</span>
+      <h3 id="sales">2026 年一季度销售报表</h3>
+      <table id="data-table">
+        <thead>
+          <tr><th>城市</th><th>销售额</th><th>同比</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>北京</td><td>1,240,000</td><td>+12%</td></tr>
+          <tr><td>上海</td><td>980,000</td><td>-3%</td></tr>
+          <tr><td>广州</td><td>1,015,000</td><td>0%</td></tr>
+        </tbody>
+      </table>
+      <p class="case__expect">预期：被提取；标题取最近的 <code>h3</code>「2026 年一季度销售报表」；3 行 × 3 列；识别到表头。</p>
+    </div>
+
+    <!-- ==================== 用例 2 ==================== -->
+    <div class="case">
+      <span class="case__tag">用例 2 · 合并单元格</span>
+      <table id="merged">
+        <caption>合并单元格测试表</caption>
+        <tr><th>季度</th><th>2025</th><th>2026</th></tr>
+        <tr><td rowspan="2">上半年</td><td>100</td><td>120</td></tr>
+        <tr><td>110</td><td>150</td></tr>
+        <tr><td colspan="3">合计 480</td></tr>
+      </table>
+      <p class="case__expect">预期：标题取 <code>caption</code>；4 行 × 3 列；rowspan 占位为空字符串，colspan 展开后补空列。</p>
+    </div>
+
+    <!-- ==================== 用例 3 ==================== -->
+    <div class="case">
+      <span class="case__tag">用例 3 · 特殊字符（CSV 转义）</span>
+      <table id="special">
+        <tr><th>描述</th><th>备注</th></tr>
+        <tr><td>北京,上海</td><td>他说"你好"</td></tr>
+        <tr><td>第一行<br>第二行</td><td> 两端有空格 </td></tr>
+        <tr><td>含逗号, 和"引号"</td><td>换行<br>测试</td></tr>
+      </table>
+      <p class="case__expect">预期：单元格内换行被保留；导出 CSV 后字段被正确加引号转义，用 Excel 打开不错列。</p>
+    </div>
+
+    <!-- ==================== 用例 4 ==================== -->
+    <div class="case">
+      <span class="case__tag">用例 4 · 多行表头</span>
+      <table id="multi-header">
+        <thead>
+          <tr><th rowspan="2">地区</th><th colspan="2">2026 上半年</th></tr>
+          <tr><th>Q1</th><th>Q2</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>华东</td><td>320</td><td>410</td></tr>
+          <tr><td>华南</td><td>280</td><td>360</td></tr>
+        </tbody>
+      </table>
+      <p class="case__expect">预期：两行表头合并为一行复合表头「地区 / 2026 上半年 - Q1 / 2026 上半年 - Q2」，JSON 字段名有意义。</p>
+    </div>
+
+    <!-- ==================== 用例 5 ==================== -->
+    <div class="case">
+      <span class="case__tag">用例 5 · 无 thead，首行全为 th</span>
+      <table id="th-only">
+        <tbody>
+          <tr><th>商品</th><th>库存</th></tr>
+          <tr><td>苹果</td><td>32</td></tr>
+          <tr><td>香蕉</td><td>18</td></tr>
+        </tbody>
+      </table>
+      <p class="case__expect">预期：被提取；识别为含表头（首行全部是 th）。</p>
+    </div>
+
+    <!-- ==================== 用例 6 ==================== -->
+    <div class="case">
+      <span class="case__tag">用例 6 · 图片 / 输入框单元格（alt、value 兜底）</span>
+      <table id="icon-cells">
+        <tr><th>图标</th><th>状态</th><th>备注</th></tr>
+        <tr>
+          <td><img src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=="
+              alt="绿色对勾" width="12" height="12"></td>
+          <td>已完成</td>
+          <td>纯图标单元格应导出 <code>绿色对勾</code></td>
+        </tr>
+        <tr>
+          <td><input type="text" value="待确认" readonly style="width:80px"></td>
+          <td>进行中</td>
+          <td>输入框单元格应导出 <code>待确认</code></td>
+        </tr>
+      </table>
+      <p class="case__expect">预期：被提取；无文字的单元格不会导出为空，而是取 <code>alt</code> 或 <code>value</code>。</p>
+    </div>
+
+    <!-- ==================== 用例 7 ==================== -->
+    <div class="case">
+      <span class="case__tag">用例 7 · 应被过滤：空表</span>
+      <table id="empty-table">
+        <tbody>
+          <tr><td></td><td></td></tr>
+          <tr><td></td><td></td></tr>
+        </tbody>
+      </table>
+      <p class="case__expect">预期：<b>不出现</b>在预览页（内容全空）。</p>
+    </div>
+
+    <!-- ==================== 用例 8 ==================== -->
+    <div class="case">
+      <span class="case__tag">用例 8 · 应被过滤：布局装饰表</span>
+      <table id="layout-table" style="width:100%">
+        <tr>
+          <td style="width:30%"><div>左侧导航</div></td>
+          <td><div>右侧正文占位</div></td>
+        </tr>
+      </table>
+      <p class="case__expect">预期：<b>不出现</b>在预览页（单元格内是块级容器、只有一行、文本极少）。可关闭「过滤布局装饰表格」后验证会重新出现。</p>
+    </div>
+
+    <!-- ==================== 用例 9 ==================== -->
+    <div class="case">
+      <span class="case__tag">用例 9 · 应被过滤：单行表（默认阈值）</span>
+      <table id="one-row">
+        <tr><td>a</td><td>b</td><td>c</td></tr>
+      </table>
+      <p class="case__expect">预期：默认被「最小有效行数 2」过滤；把设置改成 1 后应能提取到。</p>
+    </div>
+
+    <!-- ==================== 用例 10 ==================== -->
+    <div class="case">
+      <span class="case__tag">用例 10 · 隐藏表格（默认保留并标记）</span>
+      <table id="hidden-table" style="display:none">
+        <tr><td>隐藏列一</td><td>隐藏列二</td></tr>
+        <tr><td>x</td><td>y</td></tr>
+      </table>
+      <p class="case__expect">预期：默认出现在预览页并标记「页面中隐藏」；开启「跳过隐藏表格」后消失。</p>
+    </div>
+
+    <!-- ==================== 动态区域 ==================== -->
+    <h2>动态渲染区域</h2>
+    <p class="lead">点击上方按钮 ①~⑤，验证插件对 SPA 动态页面与异步数据的兼容性。</p>
+    <div id="dynamic-zone"></div>
+  </div>
+
+  <script>
+    /* 仅用于手工测试的动态行为，与扩展运行无关 */
+    var zone = document.getElementById('dynamic-zone');
+    var injected = [];
+
+    function makeTable(id, title, rows) {
+      var html = '<table id="' + id + '"><thead><tr><th>订单号</th><th>状态</th><th>金额</th></tr></thead><tbody>';
+      for (var i = 1; i <= rows; i++) {
+        html += '<tr><td>' + title + '-' + String(i).padStart(3, '0') +
+          '</td><td>' + (i % 2 ? '已发货' : '待付款') + '</td><td>' + (i * 137) + '</td></tr>';
+      }
+      return html + '</tbody></table>';
+    }
+
+    document.getElementById('btnInject').addEventListener('click', function () {
+      var box = document.createElement('section');
+      box.className = 'case';
+      box.innerHTML = '<span class="case__tag">动态插入</span>' +
+        '<h3>动态订单表</h3>' + makeTable('spa-table-' + Date.now(), 'SPA', 3);
+      zone.appendChild(box);
+      injected.push(box);
+    });
+
+    document.getElementById('btnLate').addEventListener('click', function () {
+      var box = document.createElement('section');
+      box.className = 'case';
+      box.innerHTML = '<span class="case__tag">异步加载中…</span><p>1.5 秒后出现表格…</p>';
+      zone.appendChild(box);
+      injected.push(box);
+      setTimeout(function () {
+        box.innerHTML = '<span class="case__tag">异步完成</span>' +
+          '<h3>异步报表</h3>' + makeTable('async-table-' + Date.now(), 'ASYNC', 4);
+      }, 1500);
+    });
+
+    document.getElementById('btnReplace').addEventListener('click', function () {
+      // 模拟框架整块替换 body：扩张的悬浮按钮应当自动重新挂载
+      var content = document.body.innerHTML;
+      document.body.innerHTML = '<div class="page"><h2>body 已被整块替换</h2>' +
+        '<p>TableGrab 悬浮按钮应当自动重新出现在右下角，功能依然可用。</p>' +
+        '<div id="dynamic-zone-2"></div></div>' +
+        '<div class="page">' +
+        makeTable('after-replace', 'REPLACED', 3) +
+        '</div>';
+      // 清掉旧事件绑定，避免重复注册
+      void content;
+    });
+
+    document.getElementById('btnBig').addEventListener('click', function () {
+      if (document.getElementById('big-table')) return;
+      var cols = 8;
+      var html = '<section class="case"><span class="case__tag">性能测试</span>' +
+        '<h3>120 行 × 8 列大表格</h3><table id="big-table"><thead><tr>';
+      for (var c = 1; c <= cols; c++) html += '<th>指标 ' + c + '</th>';
+      html += '</tr></thead><tbody>';
+      for (var r = 1; r <= 120; r++) {
+        html += '<tr>';
+        for (var c2 = 1; c2 <= cols; c2++) html += '<td>' + (r * c2) + '</td>';
+        html += '</tr>';
+      }
+      html += '</tbody></table><p class="case__expect">预期：提取迅速；预览页显示前 12 行 × 10 列，可点「展开全部行」。</p></section>';
+      zone.insertAdjacentHTML('beforeend', html);
+    });
+
+    document.getElementById('btnClear').addEventListener('click', function () {
+      injected.forEach(function (node) { node.remove(); });
+      injected = [];
+      var big = document.getElementById('big-table');
+      if (big && big.parentNode) big.parentNode.remove();
+    });
+  </script>
+</body>
+
+</html>

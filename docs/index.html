@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TableGrab 表格抓取 —— 网页表格批量导出 Edge 扩展</title>
+  <meta name="description" content="TableGrab 表格抓取是一款 Microsoft Edge / Chrome 浏览器扩展：一键扫描网页内全部表格，新标签页预览勾选，批量导出 CSV、Excel 兼容 CSV、Markdown 表格、JSON 到本地。全部本地处理，不上传任何数据。">
+  <meta name="keywords" content="网页表格导出,表格提取插件,Edge扩展,Chrome插件,CSV导出,表格转Excel,Markdown表格,表格抓取">
+  <meta name="theme-color" content="#2563eb">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <a class="skip-link" href="#main">跳到主要内容</a>
+
+  <!-- ============================ 顶部导航 ============================ -->
+  <header class="site-header">
+    <nav class="nav wrap" aria-label="主导航">
+      <a class="brand" href="index.html">
+        <img class="brand__mark" src="assets/logo.svg" alt="" width="30" height="30">
+        <span>
+          <span class="brand__name">TableGrab</span>
+          <span class="brand__sub">表格抓取</span>
+        </span>
+      </a>
+
+      <button class="icon-btn nav__toggle" id="navToggle" type="button" aria-label="展开导航菜单"
+        aria-controls="navLinks" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          aria-hidden="true">
+          <path d="M3 6h18M3 12h18M3 18h18" />
+        </svg>
+      </button>
+
+      <div class="nav__links" id="navLinks">
+        <a class="nav__link" href="index.html#features">核心功能</a>
+        <a class="nav__link" href="features.html">功能详解</a>
+        <a class="nav__link" href="install.html">安装使用</a>
+        <a class="nav__link" href="faq.html">常见问题</a>
+      </div>
+
+      <div class="nav__actions">
+        <button class="icon-btn" id="themeToggle" type="button" aria-label="切换深色模式">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4.5" />
+            <path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M6.5 17.5L5 19" />
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" hidden aria-hidden="true">
+            <path d="M20 14.5A8.5 8.5 0 019.5 4a8.5 8.5 0 1010.5 10.5z" />
+          </svg>
+        </button>
+        <a class="btn btn--primary btn--sm" href="install.html">立即安装</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main">
+    <!-- ============================ 首屏 ============================ -->
+    <section class="hero">
+      <div class="wrap hero__inner">
+        <div>
+          <span class="eyebrow">Edge / Chrome 扩展 · Manifest V3</span>
+          <h1 class="hero__title">把网页上的表格<br><em>一次性全部导出</em></h1>
+          <p class="hero__desc">
+            TableGrab 表格抓取自动扫描当前网页里的所有 <code>&lt;table&gt;</code> 表格，在独立标签页中预览、搜索、勾选，
+            一键导出为 CSV、Excel 兼容 CSV、Markdown 表格或 JSON 文件。支持 Vue / React 等 SPA 动态渲染页面，
+            数据全程本地处理，不经过任何服务器。
+          </p>
+
+          <div class="hero__cta">
+            <a class="btn btn--primary btn--lg" href="install.html">
+              查看安装步骤
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" aria-hidden="true">
+                <path d="M5 12h14M13 6l6 6-6 6" />
+              </svg>
+            </a>
+            <a class="btn btn--lg" href="#formats">看看导出效果</a>
+          </div>
+
+          <p class="hero__note">无需后端服务 · 无需账号登录 · 单文件扩展、离线可用</p>
+
+          <div class="hero__badges">
+            <span class="chip"><i class="chip__dot"></i>原生 &lt;table&gt; 解析</span>
+            <span class="chip"><i class="chip__dot"></i>rowspan / colspan 展开</span>
+            <span class="chip"><i class="chip__dot"></i>CSV 特殊字符转义</span>
+            <span class="chip"><i class="chip__dot"></i>悬浮按钮可拖拽</span>
+          </div>
+        </div>
+
+        <!-- 产品示意图（纯 CSS 绘制，离线可用） -->
+        <div class="hero__visual">
+          <div class="mock" aria-hidden="true">
+            <div class="mock__bar">
+              <span class="mock__dot"></span>
+              <span class="mock__dot"></span>
+              <span class="mock__dot"></span>
+              <span class="mock__url">https://example.com/report/2026-q1</span>
+            </div>
+            <div class="mock__body">
+              <div class="mock__fake-title"></div>
+              <div class="mock__row">
+                <span class="mock__cell mock__cell--head"></span>
+                <span class="mock__cell mock__cell--head"></span>
+                <span class="mock__cell mock__cell--head"></span>
+              </div>
+              <div class="mock__row">
+                <span class="mock__cell"></span><span class="mock__cell"></span><span class="mock__cell"></span>
+              </div>
+              <div class="mock__row">
+                <span class="mock__cell"></span><span class="mock__cell"></span><span class="mock__cell"></span>
+              </div>
+              <div class="mock__row">
+                <span class="mock__cell"></span><span class="mock__cell"></span><span class="mock__cell"></span>
+              </div>
+              <div class="mock__tip">已提取 6 张表格，正在打开预览</div>
+              <div class="mock__fab">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  aria-hidden="true">
+                  <rect x="3" y="3" width="18" height="18" rx="2" />
+                  <path d="M3 9h18M3 15h18M9 3v18M15 3v18" />
+                </svg>
+                提取表格
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 关键指标 -->
+      <div class="wrap hero__stats">
+        <div class="stat">
+          <div class="stat__num" data-count="4">4</div>
+          <div class="stat__label">种导出格式</div>
+        </div>
+        <div class="stat">
+          <div class="stat__num" data-count="2">2</div>
+          <div class="stat__label">种批量导出方式</div>
+        </div>
+        <div class="stat">
+          <div class="stat__num" data-count="0" data-suffix=" 后端">0 后端</div>
+          <div class="stat__label">纯前端本地处理</div>
+        </div>
+        <div class="stat">
+          <div class="stat__num" data-count="3">3</div>
+          <div class="stat__label">秒完成一次导出</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================ 核心功能 ============================ -->
+    <section class="section" id="features">
+      <div class="wrap">
+        <div class="section__head reveal">
+          <span class="eyebrow">核心功能</span>
+          <h2 class="section__title">从「看到表格」到「拿到文件」，只需要三步</h2>
+          <p class="section__desc">不用再手工复制粘贴，也不用为不同格式反复调整。插件把识别、预览、勾选、导出串成一条流程。</p>
+        </div>
+
+        <div class="cards">
+          <article class="card reveal">
+            <span class="card__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                aria-hidden="true">
+                <rect x="3" y="3" width="18" height="18" rx="2" />
+                <path d="M3 9h18M9 3v18" />
+              </svg>
+            </span>
+            <h3 class="card__title">一键扫描全页表格</h3>
+            <p class="card__desc">页面右下角常驻「提取表格」悬浮按钮，点击即扫描全部原生 <code>&lt;table&gt;</code>，
+              自动识别 thead / tbody / td / th 结构，并展开合并单元格。</p>
+          </article>
+
+          <article class="card reveal">
+            <span class="card__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                aria-hidden="true">
+                <path d="M4 6h16M4 12h16M4 18h10" />
+                <circle cx="19" cy="18" r="2.4" />
+              </svg>
+            </span>
+            <h3 class="card__title">智能过滤无效表格</h3>
+            <p class="card__desc">自动剔除行列过少的空表、用表格做页面排版的装饰表格；最小行列阈值可在设置页自由调整，
+              过滤规则随时可关。</p>
+          </article>
+
+          <article class="card reveal">
+            <span class="card__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                aria-hidden="true">
+                <rect x="3" y="4" width="18" height="16" rx="2" />
+                <path d="M3 10h18M9 10v10" />
+              </svg>
+            </span>
+            <h3 class="card__title">新标签页预览勾选</h3>
+            <p class="card__desc">独立预览页列出全部表格，卡片式展示行列统计与迷你预览表格，支持关键字搜索、
+              全选 / 反选 / 清除已选，大表格可横向滚动。</p>
+          </article>
+
+          <article class="card reveal">
+            <span class="card__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                aria-hidden="true">
+                <path d="M12 3v12M7 10l5 5 5-5M4 20h16" />
+              </svg>
+            </span>
+            <h3 class="card__title">四种格式批量导出</h3>
+            <p class="card__desc">CSV、Excel 兼容 CSV（带 BOM 与 CRLF）、Markdown 表格、JSON。
+              可每张表格单独一个文件，也可合并成一个文件，文件名形如 <code>page_table_20261015_001.csv</code>。</p>
+          </article>
+
+          <article class="card reveal">
+            <span class="card__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                aria-hidden="true">
+                <path d="M12 3l9 5-9 5-9-5 9-5z" />
+                <path d="M3 13l9 5 9-5" />
+              </svg>
+            </span>
+            <h3 class="card__title">兼容 SPA 动态网页</h3>
+            <p class="card__desc">Vue / React / Angular 单页应用里异步渲染出来的表格同样能抓到：每次点击都是实时扫描，
+              内容更新后在预览页点「重新提取」即可刷新数据。</p>
+          </article>
+
+          <article class="card reveal">
+            <span class="card__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                aria-hidden="true">
+                <path d="M12 3l7 4v6c0 4-3 6.5-7 8-4-1.5-7-4-7-8V7l7-4z" />
+                <path d="M9 12l2 2 4-4" />
+              </svg>
+            </span>
+            <h3 class="card__title">数据本地处理</h3>
+            <p class="card__desc">表格数据只在浏览器内存与本地存储中流转，通过 <code>chrome.downloads</code>
+              保存到默认下载目录，不发送到任何第三方服务器。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================ 使用流程 ============================ -->
+    <section class="section section--soft">
+      <div class="wrap">
+        <div class="section__head reveal">
+          <span class="eyebrow">使用流程</span>
+          <h2 class="section__title">三步拿到干净的结构化数据</h2>
+          <p class="section__desc">按钮支持拖拽到不遮挡内容的位置，位置会被记住，下次打开网页依然在原处。</p>
+        </div>
+
+        <div class="steps-flow">
+          <article class="flow reveal">
+            <span class="flow__num">1</span>
+            <h3 class="flow__title">点击「提取表格」</h3>
+            <p class="flow__desc">悬浮按钮位于页面右下角，也可以按 <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>T</kbd>
+              或点击浏览器工具栏中的插件图标触发。</p>
+          </article>
+          <article class="flow reveal">
+            <span class="flow__num">2</span>
+            <h3 class="flow__title">在预览页勾选表格</h3>
+            <p class="flow__desc">新标签页会列出本页所有有效表格，默认全选。可按标题或内容搜索，逐张确认预览后取消不需要的表格。</p>
+          </article>
+          <article class="flow reveal">
+            <span class="flow__num">3</span>
+            <h3 class="flow__title">选择格式导出</h3>
+            <p class="flow__desc">选择导出格式与导出方式，点击「导出选中」，文件会直接进入浏览器的默认下载目录。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================ 导出格式示例 ============================ -->
+    <section class="section" id="formats">
+      <div class="wrap">
+        <div class="section__head reveal">
+          <span class="eyebrow">导出示例</span>
+          <h2 class="section__title">同一张表格，四种可直接使用的格式</h2>
+          <p class="section__desc">下面以网页上的「销售报表」表格为例，展示四种导出格式的真实内容。</p>
+        </div>
+
+        <div class="tabs reveal" data-tabs>
+          <div class="tabs__nav" role="tablist" aria-label="导出格式示例">
+            <button class="tab" type="button" role="tab" aria-selected="true">CSV</button>
+            <button class="tab" type="button" role="tab" aria-selected="false">Excel 兼容 CSV</button>
+            <button class="tab" type="button" role="tab" aria-selected="false">Markdown</button>
+            <button class="tab" type="button" role="tab" aria-selected="false">JSON</button>
+          </div>
+
+          <div class="tabs__panel">
+            <button class="copy-btn" type="button" data-copy="城市,销售额,同比
+北京,&quot;1,240,000&quot;,+12%
+上海,980,000,-3%
+广州,&quot;1,015,000&quot;,0%">复制</button>
+            <pre class="code-block"><code>城市,销售额,同比
+北京,"1,240,000",+12%
+上海,980,000,-3%
+广州,"1,015,000",0%</code></pre>
+            <p class="tabs__hint">标准 CSV：含逗号的单元格自动加双引号包裹，双引号转义成两个双引号，换行与回车同样会被正确处理。</p>
+          </div>
+
+          <div class="tabs__panel" hidden>
+            <button class="copy-btn" type="button" data-copy="page_table_20261015_001.csv">复制文件名</button>
+            <pre class="code-block"><code>（文件以 UTF-8 BOM 开头，换行使用 CRLF）
+
+城市,销售额,同比
+北京,"1,240,000",+12%
+上海,980,000,-3%
+广州,"1,015,000",0%</code></pre>
+            <p class="tabs__hint">Excel 兼容 CSV：写入 BOM 头并改用 CRLF 换行，双击即可用 Excel 正确打开、中文不乱码。</p>
+          </div>
+
+          <div class="tabs__panel" hidden>
+            <button class="copy-btn" type="button" data-copy="| 城市 | 销售额 | 同比 |
+| --- | --- | --- |
+| 北京 | 1,240,000 | +12% |
+| 上海 | 980,000 | -3% |
+| 广州 | 1,015,000 | 0% |">复制</button>
+            <pre class="code-block"><code>| 城市 | 销售额 | 同比 |
+| --- | --- | --- |
+| 北京 | 1,240,000 | +12% |
+| 上海 | 980,000 | -3% |
+| 广州 | 1,015,000 | 0% |</code></pre>
+            <p class="tabs__hint">Markdown 表格：单元格里的竖线会自动转义、换行转成 &lt;br&gt;，可直接粘贴进文档或笔记系统。</p>
+          </div>
+
+          <div class="tabs__panel" hidden>
+            <button class="copy-btn" type="button" data-copy='{
+  "index": 1,
+  "title": "2026 年一季度销售报表",
+  "headers": ["城市", "销售额", "同比"],
+  "records": [
+    { "城市": "北京", "销售额": "1,240,000", "同比": "+12%" },
+    { "城市": "上海", "销售额": "980,000", "同比": "-3%" }
+  ]
+}'>复制</button>
+            <pre class="code-block"><code>{
+  "index": 1,
+  "title": "2026 年一季度销售报表",
+  "rowCount": 3,
+  "colCount": 3,
+  "headers": ["城市", "销售额", "同比"],
+  "records": [
+    { "城市": "北京", "销售额": "1,240,000", "同比": "+12%" },
+    { "城市": "上海", "销售额": "980,000", "同比": "-3%" }
+  ],
+  "matrix": [["城市","销售额","同比"], ["北京","1,240,000","+12%"]]
+}</code></pre>
+            <p class="tabs__hint">JSON：同时给出 <code>headers</code> / <code>records</code> 结构化数据和原始 <code>matrix</code> 二维数组，
+              方便直接对接接口或脚本处理。</p>
+          </div>
+        </div>
+
+        <p class="tabs__hint" style="margin-top:16px;border:1px solid var(--border);border-radius:var(--radius);">批量导出时会按勾选顺序编号：
+          <code class="inline-code">page_table_20261015_001.csv</code>、
+          <code class="inline-code">page_table_20261015_002.csv</code>…… 选择「合并为一个文件」时则输出
+          <code class="inline-code">page_table_20261015_all.csv</code>。</p>
+      </div>
+    </section>
+
+    <!-- ============================ 安装摘要 ============================ -->
+    <section class="section section--soft" id="install-quick">
+      <div class="wrap">
+        <div class="section__head reveal">
+          <span class="eyebrow">Edge 离线安装</span>
+          <h2 class="section__title">三步加载到 Microsoft Edge</h2>
+          <p class="section__desc">扩展以「加载解压缩的扩展」方式离线安装，无需上架应用商店，也不需要开发者账号。</p>
+        </div>
+
+        <ol class="install-steps">
+          <li class="install-step reveal">
+            <span class="install-step__num">1</span>
+            <div>
+              <h3 class="install-step__title">打开扩展管理页面</h3>
+              <div class="install-step__body">
+                在 Edge 地址栏输入下面的地址并回车：
+                <div class="copy-row">
+                  <code class="inline-code">edge://extensions/</code>
+                  <button class="btn btn--sm" type="button" data-copy="edge://extensions/"
+                    data-copy-message="已复制扩展管理地址">复制地址</button>
+                </div>
+              </div>
+            </div>
+          </li>
+
+          <li class="install-step reveal">
+            <span class="install-step__num">2</span>
+            <div>
+              <h3 class="install-step__title">开启「开发人员模式」</h3>
+              <div class="install-step__body">
+                打开页面左下角的<b>开发人员模式</b>开关，顶部工具栏会多出「加载解压缩的扩展」按钮。
+                <div class="callout">Edge 与 Chrome 内核一致，插件在 Chrome 的 <code>chrome://extensions/</code> 中同样可以加载使用。</div>
+              </div>
+            </div>
+          </li>
+
+          <li class="install-step reveal">
+            <span class="install-step__num">3</span>
+            <div>
+              <h3 class="install-step__title">选择插件目录完成加载</h3>
+              <div class="install-step__body">
+                点击<b>加载解压缩的扩展</b>，选中包含 <code>manifest.json</code> 的项目文件夹即可。
+                加载成功后工具栏会出现蓝色表格图标，打开任意含表格的网页就能看到右下角的「提取表格」按钮。
+                <div class="callout callout--warn">
+                  <strong>提示：</strong>首次导出多个文件时，Edge 可能询问「是否允许下载多个文件」，选择允许即可。
+                </div>
+              </div>
+            </div>
+          </li>
+        </ol>
+
+        <div style="text-align:center;margin-top:30px;">
+          <a class="btn btn--primary btn--lg" href="install.html">查看完整安装与使用教程</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================ 常见问题（摘要） ============================ -->
+    <section class="section" id="faq-quick">
+      <div class="wrap">
+        <div class="section__head reveal">
+          <span class="eyebrow">常见问题</span>
+          <h2 class="section__title">你可能关心的几个问题</h2>
+        </div>
+
+        <div class="faq">
+          <div class="faq__item reveal">
+            <button class="faq__q" type="button" aria-expanded="false">为什么有的表格没有出现在预览页？</button>
+            <div class="faq__a" hidden>
+              插件默认会过滤「行列过少」「几乎全空」「用表格做排版」的装饰性表格。可以在插件设置页把
+              <b>最小有效行数 / 列数</b> 调小，或关闭「过滤布局装饰表格」后重新提取。
+            </div>
+          </div>
+
+          <div class="faq__item reveal">
+            <button class="faq__q" type="button" aria-expanded="false">导出的 CSV 用 Excel 打开中文乱码怎么办？</button>
+            <div class="faq__a" hidden>
+              选择导出格式里的 <b>Excel 兼容 CSV</b>。该格式会写入 UTF-8 BOM 头并使用 CRLF 换行，
+              Excel 能自动识别编码，不会出现乱码。
+            </div>
+          </div>
+
+          <div class="faq__item reveal">
+            <button class="faq__q" type="button" aria-expanded="false">数据会被上传到服务器吗？</button>
+            <div class="faq__a" hidden>
+              不会。表格解析、格式转换全部在浏览器本地完成，文件通过浏览器下载接口直接保存到本地下载目录，
+              扩展没有任何服务端接口。
+            </div>
+          </div>
+
+          <div class="faq__item reveal">
+            <button class="faq__q" type="button" aria-expanded="false">SPA 单页应用里切换标签后表格抓不到？</button>
+            <div class="faq__a" hidden>
+              每次点击「提取表格」都会实时重新扫描当前 DOM，所以在 SPA 里切换到对应标签页后直接点按钮即可。
+              如果表格是异步加载的，稍等数据出现后再点击，或在预览页使用「重新提取」。
+            </div>
+          </div>
+        </div>
+
+        <div style="text-align:center;margin-top:28px;">
+          <a class="btn" href="faq.html">查看全部常见问题</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================ 结尾 CTA ============================ -->
+    <section class="cta-band">
+      <div class="wrap">
+        <h2>现在就把网页表格变成可用数据</h2>
+        <p>加载解压缩的扩展，打开任意含表格的页面，点击「提取表格」即可开始使用。</p>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+          <a class="btn btn--lg" href="install.html">开始安装</a>
+          <a class="btn btn--lg btn--outline" href="features.html">了解功能细节</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============================ 页脚 ============================ -->
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer__grid">
+        <div class="footer__brand">
+          <a class="brand" href="index.html">
+            <img class="brand__mark" src="assets/logo.svg" alt="" width="30" height="30">
+            <span><span class="brand__name">TableGrab</span> <span class="brand__sub">表格抓取</span></span>
+          </a>
+          <p>面向 Microsoft Edge / Chrome 的网页表格批量导出扩展，基于 Manifest V3，数据全程本地处理。</p>
+        </div>
+
+        <nav class="footer__links" aria-label="页脚导航">
+          <div class="footer__col">
+            <h3>产品</h3>
+            <a href="index.html#features">核心功能</a>
+            <a href="features.html">功能详解</a>
+            <a href="index.html#formats">导出格式</a>
+          </div>
+          <div class="footer__col">
+            <h3>文档</h3>
+            <a href="install.html">安装教程</a>
+            <a href="install.html#usage">使用说明</a>
+            <a href="faq.html">常见问题</a>
+          </div>
+          <div class="footer__col">
+            <h3>技术信息</h3>
+            <a href="features.html#tech">权限说明</a>
+            <a href="features.html#tech">目录结构</a>
+            <a href="faq.html#troubleshoot">故障排查</a>
+          </div>
+        </nav>
+      </div>
+
+      <div class="footer__bottom">
+        <span>© <span data-year>2026</span> TableGrab 表格抓取 · 静态演示站点</span>
+        <span>兼容 Microsoft Edge (Chromium) 与 Google Chrome · Manifest V3</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+
+</html>

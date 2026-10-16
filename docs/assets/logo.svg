@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-label="TableGrab h<��">
+  <title>TableGrab h<��</title>
+  <defs>
+    <linearGradient id="tg-logo-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#2563eb" />
+      <stop offset="100%" stop-color="#1d4ed8" />
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="128" height="128" rx="30" fill="url(#tg-logo-bg)" />
+  <g fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="square">
+    <rect x="28" y="28" width="72" height="72" rx="3" />
+    <path d="M28 52h72M28 76h72M52 28v72M76 28v72" />
+  </g>
+</svg>
